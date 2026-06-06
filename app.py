@@ -221,11 +221,11 @@ def prev_page():
 
 # --- UI Layout Setup ---
 app = ctk.CTk()
-app.title("Lycanery's Mod Manager")
+app.title("The Sims 4 Mod Manager")
 app.geometry("700x750")  # Bumped height slightly to accommodate pagination row cleanly
 ctk.set_appearance_mode("dark")
 
-title_label = ctk.CTkLabel(app, text="Lycanery's Mod Manager", font=("Arial", 28, "bold"), text_color=LILAC_COLOR)
+title_label = ctk.CTkLabel(app, text="The Sims 4 Mod Manager", font=("Arial", 28, "bold"), text_color=LILAC_COLOR)
 title_label.pack(pady=20)
 
 search_entry = ctk.CTkEntry(app, width=600, placeholder_text="🔍 Search your mods...")
