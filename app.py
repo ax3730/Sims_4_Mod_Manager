@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from tkinter import filedialog
 import customtkinter as ctk
+import threading  # Added for background scanning
 
 # --- Styling Variables ---
 LILAC_COLOR = "#C3A6ED"
@@ -40,7 +41,6 @@ def toggle_mod(file_path, checkbox_variable):
             status_label.configure(text=f"Disabled: {file_path.name}", text_color="orange")
             
     load_mods()
-    filter_mods()
 
 def extract_zip_mod():
     """Unzips the selected file into the mods folder."""
@@ -110,42 +110,85 @@ def import_single_files():
         print(f"Errors during import: {errors}")
 
 def load_mods():
-    """Scans the folder and populates the UI with checkboxes."""
+    """Scans the folder in a background thread and streams widgets dynamically to prevent crashing."""
+    global stored_mod_widgets
+    
+    # Temporarily lock the refresh button so user can't spam double-clicks
+    load_button.configure(state="disabled", text="Scanning...")
+    status_label.configure(text="Searching mods folder...", text_color="white")
+    
+    # Clear old UI items safely
+    for widget in scrollable_frame.winfo_children():
+        widget.destroy()
+    stored_mod_widgets = []
+
+    def background_scan():
+        mods_directory = get_mods_folder()
+        found_files = []
+        
+        if mods_directory and mods_directory.exists():
+            for file in mods_directory.rglob("*"):
+                if file.is_file():
+                    is_disabled = file.suffix == ".disabled"
+                    if file.suffix in [".package", ".ts4script"] or is_disabled:
+                        found_files.append(file)
+                        
+        # Hand the files back to the main thread to safely update the UI in batches
+        app.after(0, lambda: stream_widgets_to_ui(found_files))
+
+    # Fire off the thread
+    threading.Thread(target=background_scan, daemon=True).start()
+
+def stream_widgets_to_ui(files):
+    """Loads checkboxes in small batches so Windows doesn't lock up or freeze."""
     global stored_mod_widgets
     mods_directory = get_mods_folder()
     
-    for widget in scrollable_frame.winfo_children():
-        widget.destroy()
+    if not files:
+        status_label.configure(text="No mods found in folder.", text_color="orange")
+        load_button.configure(state="normal", text="Refresh List")
+        return
+
+    status_label.configure(text=f"Loading {len(files)} mods...", text_color=LILAC_COLOR)
     
-    stored_mod_widgets = []
+    current_index = 0
+    batch_size = 30  # Number of mods to load per frame ticket
+
+    def load_next_batch():
+        nonlocal current_index
+        end_index = min(current_index + batch_size, len(files))
         
-    if mods_directory and mods_directory.exists():
-        for file in mods_directory.rglob("*"):
-            if file.is_file():
-                is_disabled = file.suffix == ".disabled"
+        for i in range(current_index, end_index):
+            file = files[i]
+            is_disabled = file.suffix == ".disabled"
+            display_name = file.stem if is_disabled else file.name
+            
+            if file.parent != mods_directory:
+                display_name = f"[{file.parent.name}] -> {display_name}"
                 
-                if file.suffix in [".package", ".ts4script"] or is_disabled:
-                    display_name = file.stem if is_disabled else file.name
-                    
-                    if file.parent != mods_directory:
-                        display_name = f"[{file.parent.name}] -> {display_name}"
-                        
-                    chk_var = ctk.IntVar(value=0 if is_disabled else 1)
-                    
-                    chk = ctk.CTkCheckBox(
-                        scrollable_frame, 
-                        text=display_name, 
-                        variable=chk_var,
-                        fg_color=LILAC_COLOR, 
-                        hover_color=LILAC_HOVER,
-                        command=lambda f=file, v=chk_var: toggle_mod(f, v)
-                    )
-                    chk.pack(anchor="w", pady=5, padx=10)
-                    stored_mod_widgets.append({"widget": chk, "name": display_name})
-                    
-        status_label.configure(text="Mods synced successfully.", text_color="white")
-    else:
-        status_label.configure(text="Error: Mods folder not found.", text_color="red")
+            chk_var = ctk.IntVar(value=0 if is_disabled else 1)
+            
+            chk = ctk.CTkCheckBox(
+                scrollable_frame, 
+                text=display_name, 
+                variable=chk_var,
+                fg_color=LILAC_COLOR, 
+                hover_color=LILAC_HOVER,
+                command=lambda f=file, v=chk_var: toggle_mod(f, v)
+            )
+            chk.pack(anchor="w", pady=5, padx=10)
+            stored_mod_widgets.append({"widget": chk, "name": display_name})
+            
+        current_index = end_index
+        
+        if current_index < len(files):
+            # Give the UI 10 milliseconds to breathe and process clicks, then load next batch
+            app.after(10, load_next_batch)
+        else:
+            # Everything is officially loaded
+            status_label.configure(text=f"Successfully synchronized {len(files)} mods.", text_color="green")
+            load_button.configure(state="normal", text="Refresh List")
+            filter_mods()
 
 def filter_mods(event=None):
     """Filters the visible checkboxes based on the search term."""
@@ -175,7 +218,6 @@ status_label.pack(pady=5)
 button_frame = ctk.CTkFrame(app, fg_color="transparent")
 button_frame.pack(pady=15)
 
-# FIXED: hover_color changed from "transparent" to a clean dark grey "#2B2B2B"
 load_button = ctk.CTkButton(
     button_frame, 
     text="Refresh List", 
