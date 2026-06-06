@@ -16,7 +16,7 @@ echo.
 echo 🚀 Step 2: Compiling app with PyInstaller...
 :: Running PyInstaller through 'python -m' bypasses the "not recognized" Windows PATH bug
 :: '--collect-all customtkinter' ensures your UI theme and styles aren't left behind
-python -m PyInstaller --onefile --noconsole --collect-all customtkinter main.py
+python -m PyInstaller --onefile --noconsole --collect-all customtkinter app.py
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
