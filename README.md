@@ -24,3 +24,12 @@ If you are pulling this repository onto a fresh Windows machine, follow these st
 2. Double click the `build.bat` file.
 3. The script will automatically install necessary dependencies (`customtkinter`, `pyinstaller`) and compile the application.
 4. Once completed, open the newly created `dist` folder to find **`app.exe`**. Rename it to `The Sims 4 Mod Manager.exe` and enjoy!
+
+## 🛡️ Note on Windows SmartScreen / Antivirus Flags
+Because this app is open-source and not signed with an expensive Microsoft developer certificate, Windows SmartScreen may show a blue warning saying "Windows protected your PC" when you first run it. 
+
+To run the app:
+1. Click **"More Info"** on the blue popup.
+2. Click **"Run Anyway"**.
+
+If your antivirus flags it, this is a false positive caused by the PyInstaller compiler. The entire source code is completely transparent and viewable right here on GitHub!
