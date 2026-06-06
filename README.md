@@ -11,21 +11,23 @@ A beautiful, lightweight, lilac themed mod manager designed specifically for **T
 
 ---
 
-## 🛠️ How to Build the Executable (Windows)
-
-If you are pulling this repository onto a fresh Windows machine, follow these steps to generate the standalone `.exe` application:
-
 ### Prerequisites
 1. Ensure **Python 3.10+** is installed from the Microsoft Store or Python.org.
 2. *Important:* Make sure **"Add Python to PATH"** was checked during the Python installation.
 
-### Automated Build Steps
-1. Download or clone this repository to the Windows PC.
-2. Double click the `build.bat` file.
-3. The script will automatically install necessary dependencies (`customtkinter`, `pyinstaller`) and compile the application.
-4. Once completed, open the newly created `dist` folder to find **`app.exe`**. Rename it to `The Sims 4 Mod Manager.exe` and enjoy!
+-------
+### 🚀 How to Install and Run
 
-## 🛡️ Note on Windows SmartScreen / Antivirus Flags
+You do not need to download the source code or run any build scripts to use this tool!
+
+1. Look at the right-hand sidebar of this page and click on the latest **Release**.
+2. Download the `sims_4_mod_manager.zip` file attached to that release.
+3. Right-click the downloaded ZIP file and select **Extract All**.
+4. Double-click the extracted application file to launch the manager!
+
+*Note: See the Antivirus section below if Windows displays a warning when you first open it.*
+
+### 🛡️ Note on Windows SmartScreen / Antivirus Flags
 Because this app is open-source and not signed with an expensive Microsoft developer certificate, Windows SmartScreen may show a blue warning saying "Windows protected your PC" when you first run it. 
 
 To run the app:
@@ -33,3 +35,5 @@ To run the app:
 2. Click **"Run Anyway"**.
 
 If your antivirus flags it, this is a false positive caused by the PyInstaller compiler. The entire source code is completely transparent and viewable right here on GitHub!
+
+
