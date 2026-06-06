@@ -23,4 +23,4 @@ If you are pulling this repository onto a fresh Windows machine, follow these st
 1. Download or clone this repository to the Windows PC.
 2. Double click the `build.bat` file.
 3. The script will automatically install necessary dependencies (`customtkinter`, `pyinstaller`) and compile the application.
-4. Once completed, open the newly created `dist` folder to find **`app.exe`**. Rename it to `Lycanery's Mod Manager.exe` and enjoy!
+4. Once completed, open the newly created `dist` folder to find **`app.exe`**. Rename it to `The Sims 4 Mod Manager.exe` and enjoy!
