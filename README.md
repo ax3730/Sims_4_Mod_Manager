@@ -1,4 +1,4 @@
-# 💜 Lycanery's Mod Manager
+# 💜 The Sims 4 Mod Manager
 
 A beautiful, lightweight, lilac themed mod manager designed specifically for **The Sims 4** on Windows. Built with Python and CustomTkinter.
 
